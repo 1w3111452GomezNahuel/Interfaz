@@ -4,76 +4,98 @@ import model.Player;
 import model.Property;
 import services.IMainMenuStrategy;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import java.util.Scanner;
 
-public class EstancieroNewGame implements IMainMenuStrategy {
+public class EstancieroNewGame extends JPanel implements IMainMenuStrategy {
     private Player player;
-    private Scanner scanner = new Scanner(System.in);
+    private JTextField nameField;
+    private JTextField numPlayersField;
+    private JTextField difficultyField;
+    private JTextField colorField;
+    private JComboBox<String> goalComboBox;
+    private Main mainFrame;
 
-    public EstancieroNewGame(){
+    public EstancieroNewGame(Main mainFrame) {
+        this.mainFrame = mainFrame;
+        initializeUI();
+    }
 
+    private void initializeUI() {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        add(new JLabel("Set up your game"));
+        add(Box.createRigidArea(new Dimension(0, 10)));
+
+        add(new JLabel("Name:"));
+        nameField = new JTextField(20);
+        add(nameField);
+
+        add(new JLabel("Amount players (2-6):"));
+        numPlayersField = new JTextField(20);
+        add(numPlayersField);
+
+        add(new JLabel("Difficulty:"));
+        difficultyField = new JTextField(20);
+        add(difficultyField);
+
+        add(new JLabel("Color:"));
+        colorField = new JTextField(20);
+        add(colorField);
+
+        add(new JLabel("Goal to win:"));
+        goalComboBox = new JComboBox<>(new String[]{"Number of properties owned", "Amount of money accumulated"});
+        add(goalComboBox);
+
+        add(Box.createRigidArea(new Dimension(0, 10)));
+
+        JButton continueButton = new JButton("Continue");
+        continueButton.addActionListener(new ContinueButtonListener());
+        add(continueButton);
+
+        JButton backButton = new JButton("Go back");
+        backButton.addActionListener(new BackButtonListener());
+        add(backButton);
     }
 
     @Override
     public void adjustMainMenu() {
-        System.out.println("--Set up your game--");
-
-        System.out.println("Name:");
-        player.setName(scanner.nextLine());
-
-        System.out.println("Amount players (2-6):");
-        int numberPlayers = scanner.nextInt();
-        //Implementar bot con valores randoms
-
-        scanner.nextLine(); // Limpiar el buffer del scanner
-
-        System.out.println("Difficulty:");
-        String difficultyGame = scanner.nextLine();
-
-        System.out.println("\nColor:");
-        player.setColor(scanner.nextLine());
-
-        System.out.println("\nGoal to win:");
-        System.out.println("1. Number of properties owned");
-        System.out.println("2. Amount of money accumulated");
-        int option = scanner.nextInt();
-
-        String goal;
-        if(option == 1) {
-            goal = "Number of properties owned";
-        } else {
-            goal = "Amount of money accumulated";
-        }
-
-        // Imprimir los datos ingresados por el jugador
-        System.out.println("\nData entered:");
-        System.out.println("Player name: " + player.getName());
-        System.out.println("Amount players: " + numberPlayers);
-        System.out.println("Difficulty game: " + difficultyGame);
-        System.out.println("Player color: " + player.getColor());
-        System.out.println("Goal to win: " + goal);
-        System.out.println();
-        System.out.println("Do you wish continue?");
-        System.out.println("1. Continue");
-        System.out.println("2. Go back");
-        int optionStateGame = scanner.nextInt();
-
-        if(optionStateGame == 1) {
-            System.out.println("Starting game...");
-            System.exit(0);
-        } else {
-            clearConsole();
-            return;
-        }
-        scanner.close();
+        mainFrame.setContentPane(this);
+        mainFrame.revalidate();
+        mainFrame.repaint();
     }
-    private void clearConsole() {
-        try {
-            //new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            for (int i = 0; i < 50; ++i) System.out.println();
-        } catch (Exception e) {
-            // Manejo de excepciones si algo sale mal al limpiar la consola
-            e.printStackTrace();
+
+    private class ContinueButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Collect data and proceed with the game setup
+            String name = nameField.getText();
+            int numPlayers = Integer.parseInt(numPlayersField.getText());
+            String difficulty = difficultyField.getText();
+            String color = colorField.getText();
+            String goal = (String) goalComboBox.getSelectedItem();
+
+            // For demonstration, print the data to the console
+            System.out.println("Player name: " + name);
+            System.out.println("Amount players: " + numPlayers);
+            System.out.println("Difficulty game: " + difficulty);
+            System.out.println("Player color: " + color);
+            System.out.println("Goal to win: " + goal);
+
+            // Proceed with the game
+            System.out.println("Starting game...");
+            System.exit(0);  // Exit for now
+        }
+    }
+
+    private class BackButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mainFrame.showMainMenu();
         }
     }
 }

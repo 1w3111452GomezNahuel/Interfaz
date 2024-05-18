@@ -69,6 +69,7 @@ import java.awt.event.ActionListener;
 
 public class Main extends JFrame {
     private MainPlayer mainPlayer;
+    private JPanel mainMenuPanel;
 
     public Main(MainPlayer mainPlayer) {
         this.mainPlayer = mainPlayer;
@@ -78,8 +79,8 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
 
         // Crear el panel principal
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        mainMenuPanel = new JPanel();
+        mainMenuPanel.setLayout(new BoxLayout(mainMenuPanel, BoxLayout.Y_AXIS));
 
         // Crear botones con íconos (los íconos pueden ser configurados como quieras)
         JButton loadGameButton = createButton("Load Game");
@@ -88,13 +89,13 @@ public class Main extends JFrame {
         JButton exitButton = createButton("Exit");
 
         // Añadir botones al panel
-        panel.add(loadGameButton);
-        panel.add(newGameButton);
-        panel.add(instructionsButton);
-        panel.add(exitButton);
+        mainMenuPanel.add(loadGameButton);
+        mainMenuPanel.add(newGameButton);
+        mainMenuPanel.add(instructionsButton);
+        mainMenuPanel.add(exitButton);
 
         // Añadir panel al frame
-        add(panel);
+        add(mainMenuPanel);
     }
 
     private JButton createButton(String text) {
@@ -115,7 +116,7 @@ public class Main extends JFrame {
                     mainPlayer.changeOptionMain(new EstancieroLoadGame());
                     break;
                 case "New Game":
-                    mainPlayer.changeOptionMain(new EstancieroNewGame());
+                    mainPlayer.changeOptionMain(new EstancieroNewGame(Main.this));
                     break;
                 case "See Instructions":
                     mainPlayer.changeOptionMain(new EstancieroInstruction());
@@ -129,6 +130,12 @@ public class Main extends JFrame {
             }
             mainPlayer.adjustMainEstanciero();
         }
+    }
+
+    public void showMainMenu() {
+        setContentPane(mainMenuPanel);
+        revalidate();
+        repaint();
     }
 
     public static void main(String[] args) {

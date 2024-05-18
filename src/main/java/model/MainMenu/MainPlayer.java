@@ -11,12 +11,11 @@ public class MainPlayer {
         this.mainMenuStrategy = mainMenuStrategy;
     }
 
-    public void changeOptionMain(IMainMenuStrategy mainMenuStrategy) {
-        this.mainMenuStrategy = mainMenuStrategy;
+    public void changeOptionMain(IMainMenuStrategy newStrategy) {
+        this.mainMenuStrategy = newStrategy;
     }
 
     public void adjustMainEstanciero() {
-        System.out.println();
-        mainMenuStrategy.adjustMainMenu();
+        this.mainMenuStrategy.adjustMainMenu();
     }
 }
