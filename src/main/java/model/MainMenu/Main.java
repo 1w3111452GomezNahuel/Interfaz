@@ -1,7 +1,7 @@
 package model.MainMenu;
 
 import services.IMainMenuStrategy;
-import javax.swing.border.EmptyBorder;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,7 +14,7 @@ public class Main extends JFrame {
 
     public Main(MainPlayer mainPlayer) {
         this.mainPlayer = mainPlayer;
-        setTitle("Estanciero Menu");
+        setTitle("Estanciero");
         setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -26,7 +26,7 @@ public class Main extends JFrame {
         JPanel contentPane = new JPanel(new BorderLayout());
         setContentPane(contentPane);
 
-        // Crear el panel para los botones con un borde vacío en la parte superior
+        // Crear el panel principal
         mainMenuPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -36,13 +36,12 @@ public class Main extends JFrame {
             }
         };
         mainMenuPanel.setLayout(new BoxLayout(mainMenuPanel, BoxLayout.Y_AXIS));
-        mainMenuPanel.setBorder(new EmptyBorder(150, 0, 0, 0)); // Espacio en la parte superior
 
         // Crear botones con íconos (los íconos pueden ser configurados como quieras)
-        JButton loadGameButton = createButton("Load Game", "/load_icon.png");
-        JButton newGameButton = createButton("New Game", "/new_icon.png");
-        JButton instructionsButton = createButton("See Instructions", "/info_icon.png");
-        JButton exitButton = createButton("Exit", "/exit.png");
+        JButton loadGameButton = createCustomButton("Load Game");
+        JButton newGameButton = createCustomButton("New Game");
+        JButton instructionsButton = createCustomButton("See Instructions");
+        JButton exitButton = createCustomButton("Exit");
 
         // Añadir espacio entre los botones
         mainMenuPanel.add(Box.createVerticalGlue());
@@ -57,20 +56,34 @@ public class Main extends JFrame {
         mainMenuPanel.add(exitButton);
         mainMenuPanel.add(Box.createVerticalGlue()); // Añadir espacio al final
 
-        // Añadir panel de botones al centro del panel principal
+        // Añadir panel al frame
+        //add(mainMenuPanel);
         contentPane.add(mainMenuPanel, BorderLayout.CENTER);
     }
 
-    private JButton createButton(String text, String iconPath) {
+    private JButton createCustomButton(String text) {
         JButton button = new JButton(text);
         button.setPreferredSize(new Dimension(200, 50));
         button.setMaximumSize(new Dimension(200, 50));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Cargar el icono
-        ImageIcon icon = new ImageIcon(getClass().getResource(iconPath));
-        button.setIcon(icon);
+        // Personalizar el botón
+        button.setBackground(new Color(210, 180, 140)); // Marrón clarito
+        button.setForeground(Color.BLACK);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.BLACK, 3, true),  // Borde grueso y redondeado
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)));   // Margen
 
+        button.setFocusPainted(false);
+        button.addActionListener(new ButtonClickListener());
+        return button;
+    }
+
+    private JButton createButton(String text) {
+        JButton button = new JButton(text);
+        button.setPreferredSize(new Dimension(200, 50));
+        button.setMaximumSize(new Dimension(200, 50));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.addActionListener(new ButtonClickListener());
         return button;
     }
@@ -81,7 +94,7 @@ public class Main extends JFrame {
             JButton source = (JButton) e.getSource();
             switch (source.getText()) {
                 case "Load Game":
-                    mainPlayer.changeOptionMain(new EstancieroLoadGame());
+                    mainPlayer.changeOptionMain(new EstancieroLoadGame(Main.this));
                     break;
                 case "New Game":
                     mainPlayer.changeOptionMain(new EstancieroNewGame(Main.this));
@@ -101,7 +114,9 @@ public class Main extends JFrame {
     }
 
     public void showMainMenu() {
-        setVisible(true);
+        setContentPane(mainMenuPanel);
+        revalidate();
+        repaint();
     }
 
     public static void main(String[] args) {
@@ -113,6 +128,12 @@ public class Main extends JFrame {
         };
 
         MainPlayer mainPlayer = new MainPlayer(mainMenuStrategy);
-        SwingUtilities.invokeLater(() -> new Main(mainPlayer).showMainMenu());
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new Main(mainPlayer).setVisible(true);
+            }
+        });
     }
 }
