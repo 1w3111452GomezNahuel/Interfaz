@@ -5,6 +5,7 @@ import model.Property;
 import services.IMainMenuStrategy;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,52 +15,97 @@ import java.util.Scanner;
 public class EstancieroNewGame extends JPanel implements IMainMenuStrategy {
     private Player player;
     private JTextField nameField;
-    private JTextField numPlayersField;
-    private JTextField difficultyField;
-    private JTextField colorField;
+    private JComboBox<String> numPlayersField;
+    private JComboBox<String> difficultyField;
+    private JComboBox<String> colorField;
     private JComboBox<String> goalComboBox;
     private Main mainFrame;
+    private Image backgroundImage;
 
     public EstancieroNewGame(Main mainFrame) {
         this.mainFrame = mainFrame;
         initializeUI();
+        loadBackgroundImage();
     }
 
     private void initializeUI() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        // Configurar el panel principal para ser transparente
+        setOpaque(false);
+        setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-        add(new JLabel("Set up your game"));
-        add(Box.createRigidArea(new Dimension(0, 10)));
+        // Panel para los campos de entrada y el combo box
+        JPanel inputPanel = new JPanel();
+        inputPanel.setOpaque(false); // Hacer el panel transparente
+        inputPanel.setLayout(new GridLayout(6, 2, 5, 5)); // Cuadrícula de 6 filas y 2 columnas
 
-        add(new JLabel("Name:"));
-        nameField = new JTextField(20);
-        add(nameField);
+        // Agregar un borde con espacio superior de 20 píxeles al inputPanel
+        inputPanel.setBorder(new EmptyBorder(200, 0, 0, 0));
 
-        add(new JLabel("Amount players (2-6):"));
-        numPlayersField = new JTextField(20);
-        add(numPlayersField);
+        inputPanel.add(new JLabel("<html><b><font size='+1' color='black'>Name:</font></b></html>"));
+        nameField = new JTextField();
+        inputPanel.add(nameField);
 
-        add(new JLabel("Difficulty:"));
-        difficultyField = new JTextField(20);
-        add(difficultyField);
+        inputPanel.add(new JLabel("<html><b><font size='+1' color='black'>Players:</font></b></html>"));
+        numPlayersField = new JComboBox<>(new String[]{"2", "3", "4", "5", "6"});
+        inputPanel.add(numPlayersField);
 
-        add(new JLabel("Color:"));
-        colorField = new JTextField(20);
-        add(colorField);
+        inputPanel.add(new JLabel("<html><b><font size='+1' color='black'>Difficulty:</font></b></html>"));
+        difficultyField = new JComboBox<>(new String[]{"Easy", "Medium", "Hard"});
+        inputPanel.add(difficultyField);
 
-        add(new JLabel("Goal to win:"));
+        inputPanel.add(new JLabel("<html><b><font size='+1' color='black'>Color:</font></b></html>"));
+        colorField = new JComboBox<>(new String[]{"Blue", "Yellow", "Red", "Green", "Black", "Violet"});
+        inputPanel.add(colorField);
+
+        inputPanel.add(new JLabel("<html><b><font size='+1' color='black'>Goal to win:</font></b></html>"));
         goalComboBox = new JComboBox<>(new String[]{"Number of properties owned", "Amount of money accumulated"});
-        add(goalComboBox);
+        inputPanel.add(goalComboBox);
 
-        add(Box.createRigidArea(new Dimension(0, 10)));
+        add(inputPanel, BorderLayout.CENTER);
 
-        JButton continueButton = new JButton("Continue");
-        continueButton.addActionListener(new ContinueButtonListener());
-        add(continueButton);
+        // Panel para los botones
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false); // Hacer el panel transparente
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        JButton backButton = new JButton("Go back");
+        JButton backButton = new JButton("<html><b>Go back</b></html>");
         backButton.addActionListener(new BackButtonListener());
-        add(backButton);
+        buttonPanel.add(backButton);
+        // Personalizar el botón
+        backButton.setBackground(new Color(210, 180, 140)); // Marrón clarito
+        backButton.setForeground(Color.BLACK);
+        backButton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.BLACK, 3, true),  // Borde grueso y redondeado
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)));   // Margen
+
+        JButton continueButton = new JButton("<html><b>Continue</b></html>");
+        continueButton.addActionListener(new ContinueButtonListener());
+        buttonPanel.add(continueButton);
+        // Personalizar el botón
+        continueButton.setBackground(new Color(210, 180, 140)); // Marrón clarito
+        continueButton.setForeground(Color.BLACK);
+        continueButton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.BLACK, 3, true),  // Borde grueso y redondeado
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)));   // Margen
+
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+
+
+    private void loadBackgroundImage() {
+        // Cargar la imagen de fondo desde un archivo
+        ImageIcon icon = new ImageIcon(getClass().getResource("/FondoEstanciero.jpg"));
+        backgroundImage = icon.getImage();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // Dibujar la imagen de fondo
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 
     @Override
@@ -74,9 +120,9 @@ public class EstancieroNewGame extends JPanel implements IMainMenuStrategy {
         public void actionPerformed(ActionEvent e) {
             // Collect data and proceed with the game setup
             String name = nameField.getText();
-            int numPlayers = Integer.parseInt(numPlayersField.getText());
-            String difficulty = difficultyField.getText();
-            String color = colorField.getText();
+            int numPlayers = Integer.parseInt((String) goalComboBox.getSelectedItem());
+            String difficulty = (String) difficultyField.getSelectedItem();
+            String color = (String) colorField.getSelectedItem();
             String goal = (String) goalComboBox.getSelectedItem();
 
             // For demonstration, print the data to the console

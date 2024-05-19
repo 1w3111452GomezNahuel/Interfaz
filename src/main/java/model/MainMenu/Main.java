@@ -14,13 +14,17 @@ public class Main extends JFrame {
 
     public Main(MainPlayer mainPlayer) {
         this.mainPlayer = mainPlayer;
-        setTitle("Estanciero Menu");
-        setSize(400, 600);
+        setTitle("Estanciero");
+        setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         // Cargar la imagen de fondo
-        backgroundImage = new ImageIcon(getClass().getResource("/monopoly_banner.jpg")).getImage();
+        backgroundImage = new ImageIcon(getClass().getResource("/FondoEstanciero.jpg")).getImage();
+
+        // Crear el panel principal con BorderLayout
+        JPanel contentPane = new JPanel(new BorderLayout());
+        setContentPane(contentPane);
 
         // Crear el panel principal
         mainMenuPanel = new JPanel() {
@@ -34,19 +38,45 @@ public class Main extends JFrame {
         mainMenuPanel.setLayout(new BoxLayout(mainMenuPanel, BoxLayout.Y_AXIS));
 
         // Crear botones con íconos (los íconos pueden ser configurados como quieras)
-        JButton loadGameButton = createButton("Load Game");
-        JButton newGameButton = createButton("New Game");
-        JButton instructionsButton = createButton("See Instructions");
-        JButton exitButton = createButton("Exit");
+        JButton loadGameButton = createCustomButton("Load Game");
+        JButton newGameButton = createCustomButton("New Game");
+        JButton instructionsButton = createCustomButton("See Instructions");
+        JButton exitButton = createCustomButton("Exit");
+
+        // Añadir espacio entre los botones
+        mainMenuPanel.add(Box.createVerticalGlue());
 
         // Añadir botones al panel
         mainMenuPanel.add(loadGameButton);
+        mainMenuPanel.add(Box.createVerticalStrut(20));
         mainMenuPanel.add(newGameButton);
+        mainMenuPanel.add(Box.createVerticalStrut(20));
         mainMenuPanel.add(instructionsButton);
+        mainMenuPanel.add(Box.createVerticalStrut(20));
         mainMenuPanel.add(exitButton);
+        mainMenuPanel.add(Box.createVerticalGlue()); // Añadir espacio al final
 
         // Añadir panel al frame
-        add(mainMenuPanel);
+        //add(mainMenuPanel);
+        contentPane.add(mainMenuPanel, BorderLayout.CENTER);
+    }
+
+    private JButton createCustomButton(String text) {
+        JButton button = new JButton(text);
+        button.setPreferredSize(new Dimension(200, 50));
+        button.setMaximumSize(new Dimension(200, 50));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Personalizar el botón
+        button.setBackground(new Color(210, 180, 140)); // Marrón clarito
+        button.setForeground(Color.BLACK);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.BLACK, 3, true),  // Borde grueso y redondeado
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)));   // Margen
+
+        button.setFocusPainted(false);
+        button.addActionListener(new ButtonClickListener());
+        return button;
     }
 
     private JButton createButton(String text) {
